@@ -1,0 +1,5 @@
+s,p,o
+http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C36209,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C137685
+http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C186375,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C137685
+http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C163765,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C137685
+http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C138065,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C150453
