@@ -113,7 +113,7 @@ def save_embeddings(embeddings, n_epochs, rep, rank):
     if not os.path.exists(path):
         os.makedirs(path)
     df = pd.DataFrame(embeddings)
-    df.to_pickle(path+f'{n_epochs}_{rep}.pkl')
+    df.to_pickle(path+f'{n_epochs}_{rep}.pkl', protocol=4)
 
 
 def save_loss_data(loss_df, rep, rank):
@@ -130,7 +130,7 @@ def save_loss_data(loss_df, rep, rank):
         path = f'./data/loss_data/'+args.knowledge_graph+'/'
     if not os.path.exists(path):
         os.makedirs(path)
-    loss_df.to_pickle(path + f'{rep}.pkl')
+    loss_df.to_pickle(path + f'{rep}.pkl', protocol=4)
 
 
 def run_experiment(knowledge_graph, nodes, epoch_list, rep, sub_dir):
