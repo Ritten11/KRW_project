@@ -1,0 +1,3 @@
+s,p,o
+http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C163008,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C138065
+http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C156386,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C138065

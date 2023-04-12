@@ -24,6 +24,8 @@ where `[KG_NAME]` is the name of the original graph, `[CHANGES_AT_RANK]` is the 
 been modified, and `[CHANGE_RATIO]` is the ratio of all triples between the ranks of `[CHANGES_AT_RANK]` that have been 
 modified.
 
+All changes made to the graph are saved in the `./data/change_log/` directory.
+
 ## Initial exploratory data analysis
 Before having making embeddings of the graphs, it is important to understand what we are working with. The 
 `data_analysis.ipynb` notebook contains a few functions providing some additional insights into the `tax_NCIT` 

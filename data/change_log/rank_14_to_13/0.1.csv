@@ -1,0 +1,5 @@
+s,p,old_o,new_o,New_triple_already_exists
+http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C41402,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C41241,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C139812,0.0
+http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C6302,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C89633,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C24059,0.0
+http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C139814,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C139812,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C24059,0.0
+http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C36213,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C150458,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C24059,0.0
