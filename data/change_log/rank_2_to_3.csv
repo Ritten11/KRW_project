@@ -1,9 +1,0 @@
-s,p,old_o,new_o
-http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C48909,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20181,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C7057
-http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C25176,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20181,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C12218
-http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C25630,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20181,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C17828
-http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C25336,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20181,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C17828
-http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C63629,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20189,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C22187
-http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C69132,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20047,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C43431
-http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C95016,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20181,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C14250
-http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C17769,http://www.w3.org/2000/01/rdf-schema#subClassOf,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20181,http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C97325
