@@ -13,7 +13,8 @@ NOTE2: Some files are too big to be stored in Github. We have stored these files
 original [National Cancer Institute Thesaures](https://drive.google.com/file/d/1faXFOvJVmdtiIGRc7189Yxo-4MDJrsQW/view?usp=share_link)
 used for this project (`owlapi.zip`), [the semi-cleaned](https://drive.google.com/file/d/1yL34lMkE833p0Tf8MW8alL0KU-UHH4vk/view?usp=share_link)
 version where all literals have been removed (`semi_cleaned_NCIT.rdf`; this version is processed further within the 
-`data_processing.ipynb` notebook), and all the created embeddings (saved in the `./data/embeddings/` folder).
+`data_processing.ipynb` notebook), and all the [created embeddings](https://drive.google.com/file/d/1U2CKgP6pvYZCQyOn16g58EgGnFK9bcIi/view?usp=share_link)
+(saved in the `./data/embeddings/` folder).
 
 
 
@@ -90,7 +91,7 @@ These embeddings will be stored in the directory `./data/embeddings/modifed_grap
 
 ## Analysing the embeddings
 
-All the analysis of the embeddings is done in `embedding_comparison.ipynb` notebook. (Note: not fully commented yet...)
+All the analysis of the embeddings is done in `embedding_comparison.ipynb` notebook. (Note: not fully commented... sorry...)
 
 To run the notebook, run: `jupyter-notebook embedding_comparison.ipynb`
 
