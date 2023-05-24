@@ -6,7 +6,6 @@ import os
 import copy
 import pickle
 import sys
-import gc # garbage collector
 
 from pyrdf2vec import RDF2VecTransformer
 from pyrdf2vec.embedders import Word2Vec
@@ -53,46 +52,52 @@ def create_walks(transformer, knowledge_graph, nodes):
     return walks, corpus
 
 
-def fit_embedding(transformer, knowledge_graph, nodes, epochs_list, rep, sub_dir):
+def fit_embedding(transformer, knowledge_graph, nodes, corpus, epochs_list, rep, sub_dir):
     """
 
     :param transformer: The RDF2VecTransformer used for making the embeddings
     :param knowledge_graph: Instance of RDF2Vec.Graph that is to be embedded
     :param nodes: Instances from which an embedding should be made. Should be a list of strings.
+    :param corpus: List of all the walks used for fitting the Word2Vec embedding
     :param epochs_list: List of epochs at which the embedding should be saved
     :param rep: The current repetition of the embedding. Sometimes multiple embeddings of the save graph are made, and
     this is needed for saving the embedding to the right directory
     :param sub_dir: subdirectory to which the embedding should be saved.
     :return:
     """
-    # loss_df = pd.DataFrame(columns=['epoch', 'loss'])
-    walks = transformer.get_walks(knowledge_graph, nodes)
-
+    loss_df = pd.DataFrame(columns=['epoch', 'loss'])
     print('Starting fitting of word2vec embedding:')
 
     bar = progressbar.ProgressBar(maxval=max(epochs_list), widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
     bar.start()
     for e in range(max(epochs_list)):
-        transformer.embedder.fit(walks, False)
+        transformer.embedder._model.train(
+            corpus,
+            total_examples=transformer.embedder._model.corpus_count,
+            epochs=1,
+            compute_loss=True,
+        )
+        loss_df = pd.concat([loss_df, pd.DataFrame(data={'epoch':[e], 'loss':transformer.embedder._model.get_latest_training_loss()})])
         if (e+1) in epochs_list:
             embeddings, literals = transformer.transform(knowledge_graph, nodes)
-            save_embeddings(embeddings, literals, e+1, rep, sub_dir)
+            save_embeddings(embeddings, e+1, rep, sub_dir)
     bar.finish()
-    return
+    save_loss_data(loss_df, rep, sub_dir)
+    embeddings, literals = transformer.transform(knowledge_graph, nodes)
+    return embeddings, literals, loss_df
 
 def init_transformer(seed):
     # Create our transformer, setting the embedding & walking strategy.
     transformer = RDF2VecTransformer(
-        Word2Vec(epochs=1, workers=10),
-        walkers=[RandomWalker(1, 2, with_reverse=True, n_jobs=10, random_state=seed, md5_bytes=None)],
-        # walkers=[RandomWalker(4, 10, with_reverse=True, n_jobs=10, random_state=seed, md5_bytes=None)],
-        verbose=1
+        Word2Vec(epochs=0, workers=1),
+        walkers=[RandomWalker(4, 10, with_reverse=False, n_jobs=5, random_state=seed)],
+        verbose=2
     )
-    # transformer.embedder._model.compute_loss = True # Needed to keep track of the loss of the embedding. Used to verify that the embedding is actually learning something
+    transformer.embedder._model.compute_loss = True # Needed to keep track of the loss of the embedding. Used to verify that the embedding is actually learning something
     return transformer
 
 
-def save_embeddings(embeddings, literals, n_epochs, rep, rank):
+def save_embeddings(embeddings, n_epochs, rep, rank):
     """
     Function for parsing the directory path and saving the embedding
     :param embeddings: The embeddings of the entities. Should be a 2d matrix
@@ -108,11 +113,7 @@ def save_embeddings(embeddings, literals, n_epochs, rep, rank):
     if not os.path.exists(path):
         os.makedirs(path)
     df = pd.DataFrame(embeddings)
-    print(df)
-    df = pd.concat([pd.DataFrame(literals, columns=['label']), df], axis=1)
-    print(df)
     df.to_pickle(path+f'{n_epochs}_{rep}.pkl', protocol=4)
-    df.to_csv(path+f'{n_epochs}_{rep}.csv', index=False)
 
 
 def save_loss_data(loss_df, rep, rank):
@@ -143,8 +144,8 @@ def run_experiment(knowledge_graph, nodes, epoch_list, rep, sub_dir):
     :return:
     """
     transformer = init_transformer(rep)
-    # walks, corpus = create_walks(transformer, knowledge_graph, nodes)
-    fit_embedding(transformer, knowledge_graph, nodes, epoch_list, rep, sub_dir)
+    walks, corpus = create_walks(transformer, knowledge_graph, nodes)
+    fit_embedding(transformer, knowledge_graph, nodes, corpus, epoch_list, rep, sub_dir)
 
 
 def get_entities(KG_loc):
@@ -153,18 +154,15 @@ def get_entities(KG_loc):
     :param KG_loc: Location from which the graph should be loaded.
     :return: A list of al unique entities within the graph.
     """
-    print("loading entities from graph")
     tax_and_sub = rdflib.Graph()
     tax_and_sub.parse(KG_loc)
-    print("finished loading KG - started entity query")
+
     nodes_result = list(tax_and_sub.query(
-            'SELECT DISTINCT ?s ?p ?o WHERE { ?s ?p ?o. FILTER(isURI(?o) && isURI(?s))}'
+            'SELECT DISTINCT ?s ?p ?o WHERE { ?s ?p ?o. }'
             ))
-    print("finished entity query - combining objects and subjects and filtering out duplicates")
     objects = {str(n[0]) for n in nodes_result}
     subjects = {str(n[2]) for n in nodes_result}
     entities = objects.union(subjects)
-    print("finished constructing entity list")
     return list(entities)
 
 
@@ -183,17 +181,13 @@ def main(n_reps, epoch_list):
     else:
         path_to_KG = [(f'./data/{args.knowledge_graph}.ttl', None)]
     for path, rank in path_to_KG:
-        print("Loading RDF2Vec KG object")
         knowledge_graph = KG(
             path,
-            literals=[['http://www.w3.org/2000/01/rdf-schema#label']]
         )
         nodes = get_entities(path)
-
-        print("Started with creation of embeddings")
         for i in range(n_reps):
             run_experiment(knowledge_graph, nodes, epoch_list, i, rank)
-            gc.collect() # call garbage collector to free unused memory
+
 
 if __name__ == '__main__':
     """

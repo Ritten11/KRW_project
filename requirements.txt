@@ -6,3 +6,5 @@ pyrdf2vec==0.2.3
 rdflib==6.2.0
 scikit_learn==1.2.1
 seaborn==0.12.2
+gensim
+aiohttp
