@@ -15,4 +15,4 @@ source $HOME/.bashrc
 conda activate KRW_project-3.11.3
 
 # Run the actual experiment. 
-python /var/scratch/rro252/KRW_project/create_embedding.py -id $SLURM_ARRAY_TASK_ID -e [10,20] -kg tax_subset_label_NCIT -w 24
+python /var/scratch/rro252/KRW_project/create_embedding.py -id $SLURM_ARRAY_TASK_ID -e [100,200,500,1000] -kg tax_subset_label_NCIT -w 24

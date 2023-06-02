@@ -70,7 +70,7 @@ def fit_embedding(transformer, knowledge_graph, nodes, epochs_list, rep, sub_dir
     """
     # loss_df = pd.DataFrame(columns=['epoch', 'loss'])
     walks = transformer.get_walks(knowledge_graph, nodes['IRI'])
-    print([n.split('#')[-1] for n in nodes['IRI']])
+    #print([n.split('#')[-1] for n in nodes['IRI']])
     print('Starting fitting of word2vec embedding:')
 
     bar = progressbar.ProgressBar(maxval=max(epochs_list),
@@ -92,7 +92,7 @@ def init_transformer(seed):
     # Create our transformer, setting the embedding & walking strategy.
     transformer = RDF2VecTransformer(
         Word2Vec(epochs=1, workers=int(args.number_of_workers)),
-        walkers=[RandomWalker(1, 2, with_reverse=True, n_jobs=int(args.number_of_workers), random_state=seed, md5_bytes=None)],
+        walkers=[RandomWalker(4, 10, with_reverse=True, n_jobs=int(args.number_of_workers), random_state=seed, md5_bytes=None)],
         # walkers=[RandomWalker(4, 10, with_reverse=True, n_jobs=10, random_state=seed, md5_bytes=None)],
         verbose=1
     )
@@ -172,7 +172,7 @@ def get_entities():
         entities = objects.union(subjects)
         entities = pd.DataFrame(entities, columns=['IRI'])
         print("finished constructing entity list")
-        print(os.path.exists('./data/entities/'))
+       # print(os.path.exists('./data/entities/'))
         if not os.path.exists('./data/entities/'):
             os.makedirs('./data/entities/', mode=0o755)
 
