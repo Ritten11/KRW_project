@@ -69,8 +69,8 @@ def fit_embedding(transformer, knowledge_graph, nodes, epochs_list, rep, sub_dir
     :return:
     """
     # loss_df = pd.DataFrame(columns=['epoch', 'loss'])
-    walks = transformer.get_walks(knowledge_graph, nodes)
-
+    walks = transformer.get_walks(knowledge_graph, nodes['IRI'])
+    print([n.split('#')[-1] for n in nodes['IRI']])
     print('Starting fitting of word2vec embedding:')
 
     bar = progressbar.ProgressBar(maxval=max(epochs_list),
@@ -79,8 +79,11 @@ def fit_embedding(transformer, knowledge_graph, nodes, epochs_list, rep, sub_dir
     for e in range(max(epochs_list)):
         transformer.embedder.fit(walks, False)
         if (e + 1) in epochs_list:
-            embeddings, literals = transformer.transform(knowledge_graph, nodes)
-            save_embeddings(embeddings, literals, e + 1, rep, sub_dir)
+            embeddings, literals = transformer.transform(knowledge_graph, nodes['IRI'])
+            df = pd.DataFrame(embeddings)
+            df = pd.concat([nodes, pd.DataFrame(literals, columns=['label']), df], axis=1)
+            save_embeddings(df, e + 1, rep, sub_dir)
+
     bar.finish()
     return
 
@@ -97,11 +100,11 @@ def init_transformer(seed):
     return transformer
 
 
-def save_embeddings(embeddings, literals, n_epochs, rep, rank):
+def save_embeddings(df, n_epochs, rep, rank):
     """
     Function for parsing the directory path and saving the embedding
-    :param embeddings: The embeddings of the entities. Should be a 2d matrix
-    :param n_epochs: The number of epochs used to train the emedding
+    :param df:
+    :param n_epochs: The number of epochs used to train the embedding
     :param rep: The current repetition of the embedding
     :param rank: If the embedding is of a modified graph, this provides an indication of where the modifications have been made
     :return: None
@@ -112,10 +115,6 @@ def save_embeddings(embeddings, literals, n_epochs, rep, rank):
         path = f'./data/embeddings/' + args.knowledge_graph + '/'
     if not os.path.exists(path):
         os.makedirs(path)
-    df = pd.DataFrame(embeddings)
-    print(df)
-    df = pd.concat([pd.DataFrame(literals, columns=['label']), df], axis=1)
-    print(df)
     df.to_pickle(path + f'{n_epochs}_{rep}.pkl', protocol=4)
     df.to_csv(path + f'{n_epochs}_{rep}.csv', index=False)
 
@@ -152,26 +151,43 @@ def run_experiment(knowledge_graph, nodes, epoch_list, rep, sub_dir):
     fit_embedding(transformer, knowledge_graph, nodes, epoch_list, rep, sub_dir)
 
 
-def get_entities(KG_loc):
+def get_entities():
     """
     In hindsight a rather inefficient implementation to extract all entities from the graph
-    :param KG_loc: Location from which the graph should be loaded.
+    # :param KG_loc: Location from which the graph should be loaded.
     :return: A list of al unique entities within the graph.
     """
-    print("loading entities from graph")
-    tax_and_sub = rdflib.Graph()
-    tax_and_sub.parse(KG_loc)
-    print("finished loading KG - started entity query")
-    nodes_result = list(tax_and_sub.query(
-        'SELECT DISTINCT ?s ?p ?o WHERE { ?s ?p ?o. FILTER(isURI(?o) && isURI(?s))}'
-    ))
-    print("finished entity query - combining objects and subjects and filtering out duplicates")
-    objects = {str(n[0]) for n in nodes_result}
-    subjects = {str(n[2]) for n in nodes_result}
-    entities = objects.union(subjects)
-    print("finished constructing entity list")
-    return list(entities)
+    try:
+        entities = pd.read_csv(f'./data/entities/{args.knowledge_graph}.csv')
+    except (FileNotFoundError, IOError):
+        KG_loc = get_KG_path()[0][0]
+        print("Loading entities from failed, trying to load them from the graph")
+        tax_and_sub = rdflib.Graph()
+        tax_and_sub.parse(KG_loc)
+        nodes_result = list(tax_and_sub.query(
+            'SELECT DISTINCT ?s ?p ?o WHERE { ?s ?p ?o. FILTER (isURI(?s) && isURI(?o))}'
+        ))
+        objects = {str(n[0]) for n in nodes_result}
+        subjects = {str(n[2]) for n in nodes_result}
+        entities = objects.union(subjects)
+        entities = pd.DataFrame(entities, columns=['IRI'])
+        print("finished constructing entity list")
+        print(os.path.exists('./data/entities/'))
+        if not os.path.exists('./data/entities/'):
+            os.makedirs('./data/entities/', mode=0o755)
 
+        entities.to_csv(f'./data/entities/{args.knowledge_graph}.csv')
+
+    return entities
+
+def get_KG_path(run_id=0):
+    if args.modified:
+        sub_dirs = [x[0] for x in os.walk(f'./data/modified_graphs/{args.knowledge_graph}')][1:]
+        path_to_KG = [str(sub_dir) + f'/{args.change_ratio}.ttl' for sub_dir in sub_dirs]
+        path_to_KG = zip(path_to_KG, [x[1] for x in os.walk(f'./data/modified_graphs/{args.knowledge_graph}')][0])
+    else:
+        path_to_KG = [(f'./data/{args.knowledge_graph}.ttl', None)]
+    return path_to_KG
 
 def main(run_id, epoch_list):
     """
@@ -181,19 +197,14 @@ def main(run_id, epoch_list):
     :param epoch_list: List of epochs of when the embedding should be saved
     :return:
     """
-    if args.modified:
-        sub_dirs = [x[0] for x in os.walk(f'./data/modified_graphs/{args.knowledge_graph}')][1:]
-        path_to_KG = [str(sub_dir) + f'/{args.change_ratio}.ttl' for sub_dir in sub_dirs]
-        path_to_KG = zip(path_to_KG, [x[1] for x in os.walk(f'./data/modified_graphs/{args.knowledge_graph}')][0])
-    else:
-        path_to_KG = [(f'./data/{args.knowledge_graph}.ttl', None)]
+    path_to_KG = get_KG_path(run_id)
     for path, rank in path_to_KG:
         print("Loading RDF2Vec KG object")
         knowledge_graph = KG(
             path,
             literals=[['http://www.w3.org/2000/01/rdf-schema#label']]
         )
-        nodes = get_entities(path)
+        nodes = get_entities()
 
         print("Started with creation of embeddings")
         run_experiment(knowledge_graph, nodes, epoch_list, run_id, rank)
