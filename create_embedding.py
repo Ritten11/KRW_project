@@ -89,7 +89,7 @@ def init_transformer(seed):
     # Create our transformer, setting the embedding & walking strategy.
     transformer = RDF2VecTransformer(
         Word2Vec(epochs=1, workers=int(args.number_of_workers)),
-        walkers=[RandomWalker(4, 10, with_reverse=True, n_jobs=int(args.number_of_workers), random_state=seed, md5_bytes=None)],
+        walkers=[RandomWalker(1, 2, with_reverse=True, n_jobs=int(args.number_of_workers), random_state=seed, md5_bytes=None)],
         # walkers=[RandomWalker(4, 10, with_reverse=True, n_jobs=10, random_state=seed, md5_bytes=None)],
         verbose=1
     )
