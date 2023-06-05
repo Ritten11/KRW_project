@@ -151,7 +151,7 @@ def run_experiment(knowledge_graph, nodes, epoch_list, rep, sub_dir):
         transformer = init_transformer(rep, e)
         # walks, corpus = create_walks(transformer, knowledge_graph, nodes)
         # fit_embedding(transformer, knowledge_graph, nodes, epoch_list, rep, sub_dir)
-        embeddings, literals = transformer.fit_transform(knowledge_graph, nodes)
+        embeddings, literals = transformer.fit_transform(knowledge_graph, nodes['IRI'])
         df = pd.DataFrame(embeddings)
         df = pd.concat([nodes, pd.DataFrame(literals, columns=['label']), df], axis=1)
         save_embeddings(df, e, rep, sub_dir)
